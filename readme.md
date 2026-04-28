@@ -153,6 +153,37 @@ Constraints:
 
 ---
 
+### Order Model
+
+Purpose:
+
+- stores customer orders for offer packages
+- preserves snapshot data from offers at purchase time
+
+Fields:
+
+- customer_user (ForeignKey → User)
+- business_user (ForeignKey → User)
+- title
+- revisions
+- delivery_time_in_days
+- price
+- features
+- offer_type
+- status
+- created_at
+- updated_at
+
+Status choices:
+
+```text
+in_progress
+completed
+cancelled
+```
+
+---
+
 ## Frontend
 
 This backend is designed to work together with the separated Coderr frontend project.
