@@ -63,6 +63,96 @@ Frontend and backend are maintained in separate repositories.
 
 ---
 
+### Apps
+
+```text
+auth_app
+profiles_app
+offers_app
+orders_app
+reviews_app
+base_info_app
+```
+
+---
+
+## Database Models
+
+### Profile Model
+
+Purpose:
+
+- extends the Django default user model
+- stores customer and business profile information
+- separates platform roles between `customer` and `business`
+
+Fields:
+
+- user (OneToOneField → User)
+- file
+- location
+- tel
+- description
+- working_hours
+- type
+- created_at
+
+Role choices:
+
+```text
+customer
+business
+```
+
+---
+
+### Offer Model
+
+Purpose:
+
+- stores service offers created by business users
+
+Fields:
+
+- user (ForeignKey → User)
+- title
+- image
+- description
+- created_at
+- updated_at
+
+---
+
+### OfferDetail Model
+
+Purpose:
+
+- stores pricing packages for an offer
+
+Fields:
+
+- offer (ForeignKey → Offer)
+- title
+- revisions
+- delivery_time_in_days
+- price
+- features
+- offer_type
+
+Offer type choices:
+
+```text
+basic
+standard
+premium
+```
+
+Constraints:
+
+- one package type per offer is allowed per offer
+
+---
+
 ## Frontend
 
 This backend is designed to work together with the separated Coderr frontend project.
