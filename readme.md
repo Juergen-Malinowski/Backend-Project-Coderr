@@ -182,6 +182,28 @@ completed
 cancelled
 ```
 
+### Review Model
+
+Purpose:
+
+- stores customer reviews for business users
+- allows editable user-based business ratings
+
+Fields:
+
+- business_user (ForeignKey → User)
+- reviewer (ForeignKey → User)
+- rating
+- description
+- created_at
+- updated_at
+
+Rules:
+
+- one review per reviewer and business user combination
+- ratings are limited to values between 1 and 5
+- reviews can be updated by their creator
+
 ---
 
 ## Frontend
