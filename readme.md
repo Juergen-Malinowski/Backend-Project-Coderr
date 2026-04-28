@@ -2,7 +2,7 @@
 
 Backend for the Coderr platform built with Django and Django REST Framework.
 
-This project is part of the Developer Akademie backend course and is designed to work together with a separated frontend repository.
+This project is part of the Developer Akademie backend course and is designed to work together with a separate frontend repository.
 
 ---
 
@@ -43,9 +43,31 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 # Run migrations
 python manage.py migrate
 
+# Create admin user
+python manage.py createsuperuser
+
 # Start development server
 python manage.py runserver
 ```
+
+---
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Database Models](#database-models)
+  - [Profile Model](#profile-model)
+  - [Offer Model](#offer-model)
+  - [OfferDetail Model](#offerdetail-model)
+  - [Order Model](#order-model)
+  - [Review Model](#review-model)
+- [API Overview](#api-overview)
+- [Frontend](#frontend)
+- [Environment Setup](#environment-setup)
+- [Authentication](#authentication)
+- [Django Admin](#django-admin)
+- [Guest Login Accounts](#guest-login-accounts)
+- [Project Status](#project-status)
 
 ---
 
@@ -112,6 +134,12 @@ Purpose:
 
 - stores service offers created by business users
 
+Additional notes:
+
+- offers are limited to business users
+- related pricing packages are managed through OfferDetail objects
+- the Django admin supports inline editing of related offer packages
+
 Fields:
 
 - user (ForeignKey → User)
@@ -151,9 +179,18 @@ Constraints:
 
 - one package type per offer is allowed per offer
 
+Admin integration:
+
+- OfferDetail objects can be managed directly inside the related Offer admin page through Django admin inlines
+
 ---
 
 ### Order Model
+
+Important behavior:
+
+- orders store snapshot data from OfferDetail objects
+- later offer changes do not affect already created orders
 
 Purpose:
 
@@ -181,6 +218,8 @@ in_progress
 completed
 cancelled
 ```
+
+---
 
 ### Review Model
 
@@ -264,6 +303,28 @@ Authorization: Token <token>
 
 ---
 
+## Django Admin
+
+The project includes a configured Django admin interface for managing platform data.
+
+Available admin areas include:
+
+- Profiles
+- Offers
+- OfferDetails
+- Orders
+- Reviews
+
+Admin interface URL:
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
+A superuser account is required to access the admin interface.
+
+---
+
 ## Guest Login Accounts
 
 The frontend uses predefined guest login accounts.
@@ -282,6 +343,35 @@ password: Dagi1234
 ```text
 username: WillWill
 password: Dagi1234
+```
+
+---
+
+## API Overview
+
+Available API endpoint groups:
+
+```text
+/api/registration/
+/api/login/
+
+/api/profile/<pk>/
+/api/profiles/business/
+/api/profiles/customer/
+
+/api/offers/
+/api/offers/<id>/
+/api/offerdetails/<id>/
+
+/api/orders/
+/api/orders/<id>/
+/api/order-count/<business_user_id>/
+/api/completed-order-count/<business_user_id>/
+
+/api/reviews/
+/api/reviews/<id>/
+
+/api/base-info/
 ```
 
 ---
