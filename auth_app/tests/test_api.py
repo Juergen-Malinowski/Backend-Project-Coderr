@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -9,7 +11,7 @@ class TestRegistrationAPI(APITestCase):
     """Tests the registration endpoint."""
 
     def setUp(self):
-        self.url = reverse('registration')
+        self.url = reverse("registration")
         self.valid_data = {
             "username": "customer_user",
             "email": "customer@example.com",
@@ -50,10 +52,91 @@ class TestRegistrationAPI(APITestCase):
     def test_registration_with_password_mismatch_returns_400(self):
         """Ensures registration fails when passwords do not match."""
 
-        self.valid_data["repeated_password"] = ("WrongPass123")
+        self.valid_data["repeated_password"] = "WrongPass123"
 
         response = self.client.post(self.url, self.valid_data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_without_username_returns_400(self):
+        """Ensures registration fails when username is missing."""
+
+        self.valid_data.pop("username")
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_without_email_returns_400(self):
+        """Ensures registration fails when email is missing."""
+
+        self.valid_data.pop("email")
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_without_password_returns_400(self):
+        """Ensures registration fails when password is missing."""
+
+        self.valid_data.pop("password")
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_without_type_returns_400(self):
+        """Ensures registration fails when type is missing."""
+
+        self.valid_data.pop("type")
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_with_invalid_type_returns_400(self):
+        """Ensures registration fails with an invalid profile type."""
+
+        self.valid_data["type"] = "admin"
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_with_duplicate_username_returns_400(self):
+        """Ensures registration fails with an existing username."""
+
+        User.objects.create_user(
+            username="customer_user",
+            email="existing@example.com",
+            password="Testpass123"
+        )
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_registration_with_duplicate_email_returns_400(self):
+        """Ensures registration fails with an existing email address."""
+
+        User.objects.create_user(
+            username="existing_user",
+            email="customer@example.com",
+            password="Testpass123"
+        )
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    @patch("django.contrib.auth.models.User.objects.create_user")
+    def test_registration_internal_error_returns_500(self, mock_create_user):
+        """Ensures registration returns HTTP 500 on internal errors."""
+
+        mock_create_user.side_effect = Exception("Internal error")
+
+        response = self.client.post(self.url, self.valid_data)
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 class TestLoginAPI(APITestCase):
@@ -109,3 +192,52 @@ class TestLoginAPI(APITestCase):
 
         response = self.client.post(self.url, data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_login_without_username_returns_400(self):
+        """Ensures login fails when username is missing."""
+
+        data = {
+            "password": "Testpass123",
+        }
+
+        response = self.client.post(self.url, data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_login_without_password_returns_400(self):
+        """Ensures login fails when password is missing."""
+
+        data = {
+            "username": "customer_user",
+        }
+
+        response = self.client.post(self.url, data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    def test_login_with_unknown_username_returns_400(self):
+        """Ensures login fails with an unknown username."""
+
+        data = {
+            "username": "unknown_user",
+            "password": "Testpass123"
+        }
+
+        response = self.client.post(self.url, data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    @patch("auth_app.api.views.authenticate")
+    def test_login_internal_error_returns_500(self, mock_authenticate):
+        """Ensures login returns HTTP 500 on internal errors."""
+
+        mock_authenticate.side_effect = Exception("Internal error")
+
+        data = {
+            "username": "customer_user",
+            "password": "Testpass123"
+        }
+
+        response = self.client.post(self.url, data)
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
