@@ -68,6 +68,13 @@ python manage.py runserver
 - [Django Admin](#django-admin)
 - [Guest Login Accounts](#guest-login-accounts)
 - [Project Status](#project-status)
+- [Testing](#testing)
+  - [Test Structure](#test-structure)
+  - [Tested Apps](#tested-apps)
+  - [Test File Locations](#test-file-locations)
+  - [Running Tests](#running-tests)
+  - [Current Test Counts](#current-test-counts)
+  - [Test Coverage Focus](#test-coverage-focus)
 
 ---
 
@@ -387,3 +394,171 @@ Current progress includes:
 - environment security preparation
 - gitignore configuration
 - initial README structure
+
+## Testing
+
+This project follows a strong test-driven development (TDD) approach.
+
+The goal of the testing architecture is to validate backend behavior before endpoint implementation is completed. Each endpoint receives dedicated API tests to verify permissions, validation logic, filtering behavior, aggregation logic, ordering behavior and expected HTTP responses.
+
+---
+
+### Test Structure
+
+The test suite is organized by app and endpoint responsibility.
+
+Each endpoint has its own dedicated test file to keep tests isolated, maintainable and easier to debug.
+
+Reusable setup logic is extracted into `mixins.py` files where appropriate.
+
+Example structure:
+
+```text
+app_name/tests/
+├── mixins.py
+├── test_endpoint_list_api.py
+├── test_endpoint_create_api.py
+├── test_endpoint_detail_api.py
+```
+
+---
+
+### Tested Apps
+
+The following apps currently contain dedicated API test coverage:
+
+```text
+auth_app
+profiles_app
+offers_app
+orders_app
+reviews_app
+base_info_app
+```
+
+---
+
+### Test File Locations
+
+#### auth_app
+
+```text
+auth_app/tests/
+├── mixins.py
+├── test_login_api.py
+└── test_registration_api.py
+```
+
+#### profiles_app
+
+```text
+profiles_app/tests/
+├── mixins.py
+├── test_business_profile_list_api.py
+├── test_customer_profile_list_api.py
+└── test_profile_detail_api.py
+```
+
+#### offers_app
+
+```text
+offers_app/tests/
+├── mixins.py
+├── test_offer_create_api.py
+├── test_offer_detail_api.py
+├── test_offer_detail_retrieve_api.py
+└── test_offer_list_api.py
+```
+
+#### orders_app
+
+```text
+orders_app/tests/
+├── mixins.py
+├── test_completed_order_count_api.py
+├── test_order_count_api.py
+├── test_order_create_api.py
+├── test_order_detail_api.py
+└── test_order_list_api.py
+```
+
+#### reviews_app
+
+```text
+reviews_app/tests/
+├── mixins.py
+├── test_review_create_api.py
+├── test_review_detail_api.py
+└── test_review_list_api.py
+```
+
+#### base_info_app
+
+```text
+base_info_app/tests/
+└── test_base_info_platform_statistics_api.py
+```
+
+---
+
+### Running Tests
+
+Run all tests:
+
+```bash
+pytest
+```
+
+Run tests for a specific app:
+
+```bash
+pytest reviews_app/tests/
+```
+
+Run a single endpoint test file:
+
+```bash
+pytest reviews_app/tests/test_review_create_api.py
+```
+
+Run a single test method:
+
+```bash
+pytest reviews_app/tests/test_review_create_api.py::TestReviewCreateAPI::test_create_review_returns_201
+```
+
+This allows every endpoint test suite to be executed independently during development and debugging.
+
+---
+
+### Current Test Counts
+
+| App           | Test Count |
+| ------------- | ---------: |
+| auth_app      |         19 |
+| profiles_app  |         15 |
+| offers_app    |         31 |
+| orders_app    |         25 |
+| reviews_app   |         34 |
+| base_info_app |          8 |
+
+---
+
+### Test Coverage Focus
+
+The test suite validates:
+
+- authentication and permissions
+- ownership protection
+- serializer validation
+- required fields
+- filtering and ordering behavior
+- aggregation and statistics endpoints
+- pagination responses
+- snapshot data integrity
+- invalid input handling
+- HTTP status code correctness
+- internal error handling
+- object deletion behavior
+
+All tests are designed to validate backend behavior independently from frontend validation logic.
