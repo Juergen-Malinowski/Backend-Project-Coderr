@@ -93,7 +93,7 @@ class TestLoginAPI(APITestCase, AuthTestMixin):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-    @patch("auth_app.api.views.authenticate")
+    @patch("auth_app.api.serializers.authenticate")
     def test_login_internal_error_returns_500(self, mock_authenticate):
         """Ensures login returns HTTP 500 on internal errors."""
 
