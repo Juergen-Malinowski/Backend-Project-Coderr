@@ -7,7 +7,47 @@ from rest_framework.views import APIView
 from profiles_app.models import Profile
 
 from .permissions import IsProfileOwnerForPatch
-from .serializers import ProfileDetailSerializer
+from .serializers import ProfileDetailSerializer, ProfileListSerializer
+
+
+class BusinessProfileListView(APIView):
+    """API view for listing business profiles."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Returns all business profiles."""
+
+        try:
+            profiles = Profile.objects.filter(type=Profile.BUSINESS)
+            serializer = ProfileListSerializer(profiles, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class CustomerProfileListView(APIView):
+    """API view for listing customer profiles."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Returns all customer profiles."""
+
+        try:
+            profiles = Profile.objects.filter(type=Profile.CUSTOMER)
+            serializer = ProfileListSerializer(profiles, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class ProfileDetailView(APIView):
@@ -75,15 +115,3 @@ class ProfileDetailView(APIView):
                 error.detail,
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-
-class BusinessProfileListView(APIView):
-    """API view for listing business profiles."""
-
-    pass
-
-
-class CustomerProfileListView(APIView):
-    """API view for listing customer profiles."""
-
-    pass

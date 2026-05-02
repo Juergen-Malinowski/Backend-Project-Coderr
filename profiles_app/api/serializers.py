@@ -3,6 +3,39 @@ from rest_framework import serializers
 from profiles_app.models import Profile
 
 
+class ProfileListSerializer(serializers.ModelSerializer):
+    """Handles profile list serialization for public profile lists."""
+
+    user = serializers.IntegerField(source="user.id", read_only=True)
+    username = serializers.CharField(
+        source="user.username",
+        read_only=True,
+    )
+    first_name = serializers.CharField(
+        source="user.first_name",
+        read_only=True,
+    )
+    last_name = serializers.CharField(
+        source="user.last_name",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+        ]
+
+
 class ProfileDetailSerializer(serializers.ModelSerializer):
     """Handles user and profile detail serialization and updates."""
 

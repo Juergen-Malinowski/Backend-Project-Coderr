@@ -531,7 +531,7 @@ This allows every endpoint test suite to be executed independently during develo
 
 ---
 
-### Current Test Counts
+### Current Test Counts - 155 Tests
 
 | App           | Test Count |
 | ------------- | ---------: |
