@@ -536,9 +536,9 @@ This allows every endpoint test suite to be executed independently during develo
 | App           | Test Count |
 | ------------- | ---------: |
 | auth_app      |         19 |
-| profiles_app  |         15 |
-| offers_app    |         31 |
-| orders_app    |         25 |
+| profiles_app  |         22 |
+| offers_app    |         34 |
+| orders_app    |         38 |
 | reviews_app   |         34 |
 | base_info_app |          8 |
 
