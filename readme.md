@@ -73,7 +73,7 @@ python manage.py runserver
   - [Tested Apps](#tested-apps)
   - [Test File Locations](#test-file-locations)
   - [Running Tests](#running-tests)
-  - [Current Test Counts](#current-test-counts)
+- [Current Test Counts - 155 Tests](#current-test-counts---155-tests)
   - [Test Coverage Focus](#test-coverage-focus)
 
 ---
