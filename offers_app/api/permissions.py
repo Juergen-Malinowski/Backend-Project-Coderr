@@ -13,3 +13,12 @@ class IsBusinessUser(BasePermission):
             hasattr(request.user, "profile")
             and request.user.profile.type == Profile.BUSINESS
         )
+
+
+class IsOfferOwner(BasePermission):
+    """Allows access only to the owner of an offer."""
+
+    def has_object_permission(self, request, view, obj):
+        """Checks whether the authenticated user owns the offer."""
+
+        return obj.user == request.user

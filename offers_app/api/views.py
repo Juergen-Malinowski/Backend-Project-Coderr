@@ -1,16 +1,22 @@
 from django.db.models import Min, Q
 
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from offers_app.models import Offer
+from offers_app.models import Offer, OfferDetail
 
-from .permissions import IsBusinessUser
-from .serializers import OfferCreateSerializer, OfferListSerializer
+from .permissions import IsBusinessUser, IsOfferOwner
+from .serializers import (
+    OfferCreateSerializer,
+    OfferDetailSerializer,
+    OfferDetailViewSerializer,
+    OfferListSerializer,
+    OfferUpdateSerializer,
+)
 
 
 class OfferPagination(PageNumberPagination):
@@ -165,10 +171,139 @@ class OfferListCreateView(APIView):
 class OfferDetailView(APIView):
     """API view for offer details, update and delete."""
 
-    pass
+    permission_classes = [IsAuthenticated]
+
+
+    def get(self, request, pk):
+        """Returns detailed data for one offer."""
+
+        offer, error_response = self._get_offer_or_error(pk)
+
+        if error_response:
+            return error_response
+
+        serializer = OfferDetailViewSerializer(offer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def patch(self, request, pk):
+        """Updates an owned offer and selected offer details."""
+
+        offer, error_response = self._get_offer_or_error(pk)
+
+        if error_response:
+            return error_response
+
+        self._check_offer_owner(request, offer)
+
+        try:
+            serializer = OfferUpdateSerializer(
+                offer,
+                data=request.data,
+                partial=True,
+            )
+
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        except ValidationError as error:
+            return Response(
+                error.detail,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+    def delete(self, request, pk):
+        """Deletes an offer owned by the authenticated user."""
+
+        offer, error_response = self._get_offer_or_error(pk)
+
+        if error_response:
+            return error_response
+
+        self._check_offer_owner(request, offer)
+
+        try:
+            offer.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+    def _get_offer_or_error(self, pk):
+        """Returns an offer with summary annotations or an error response."""
+
+        try:
+            offer = Offer.objects.get(pk=pk)
+
+            offer.min_price = offer.details.aggregate(
+                min_price=Min("price"),
+            )["min_price"]
+
+            offer.min_delivery_time = offer.details.aggregate(
+                min_delivery_time=Min("delivery_time_in_days"),
+            )["min_delivery_time"]
+
+            return offer, None
+        except Offer.DoesNotExist:
+            return None, Response(
+                {"detail": "Offer not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception:
+            return None, Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+    def _check_offer_owner(self, request, offer):
+        """Checks whether the authenticated user owns the offer."""
+
+        permission = IsOfferOwner()
+
+        if not permission.has_object_permission(request, self, offer):
+            raise PermissionDenied()
 
 
 class OfferDetailRetrieveView(APIView):
     """API view for retrieving a single offer detail."""
 
-    pass
+    permission_classes = [IsAuthenticated]
+
+
+    def get(self, request, pk):
+        """Returns one offer detail object."""
+
+        offer_detail, error_response = self._get_offer_detail_or_error(pk)
+
+        if error_response:
+            return error_response
+
+        serializer = OfferDetailSerializer(offer_detail)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def _get_offer_detail_or_error(self, pk):
+        """Returns an offer detail object or an error response."""
+
+        try:
+            return OfferDetail.objects.get(pk=pk), None
+        except OfferDetail.DoesNotExist:
+            return None, Response(
+                {"detail": "Offer detail not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception:
+            return None, Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

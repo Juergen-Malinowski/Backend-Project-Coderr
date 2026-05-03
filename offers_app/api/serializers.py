@@ -127,10 +127,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         details_data = validated_data.pop("details")
         user = self.context["request"].user
 
-        offer = Offer.objects.create(
-            user=user,
-            **validated_data,
-        )
+        offer = Offer.objects.create(user=user, **validated_data)
 
         self._create_offer_details(offer, details_data)
 
@@ -140,7 +137,73 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         """Creates all nested offer details."""
 
         for detail_data in details_data:
-            OfferDetail.objects.create(
-                offer=offer,
-                **detail_data,
-            )
+            OfferDetail.objects.create(offer=offer, **detail_data)
+
+
+class OfferDetailViewSerializer(serializers.ModelSerializer):
+    """Serializes detailed offer data for single offer views."""
+
+    user = serializers.IntegerField(source="user.id", read_only=True)
+    details = OfferDetailLinkSerializer(many=True, read_only=True)
+    min_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+    min_delivery_time = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id",
+            "user",
+            "title",
+            "image",
+            "description",
+            "created_at",
+            "updated_at",
+            "details",
+            "min_price",
+            "min_delivery_time",
+        ]
+
+
+class OfferUpdateSerializer(serializers.ModelSerializer):
+    """Handles partial offer and offer detail updates."""
+
+    details = OfferDetailSerializer(many=True, required=False)
+
+    class Meta:
+        model = Offer
+        fields = [
+            "title",
+            "image",
+            "description",
+            "details",
+        ]
+
+    def update(self, instance, validated_data):
+        """Updates offer fields and nested offer details."""
+
+        details_data = validated_data.pop("details", None)
+
+        instance = super().update(instance, validated_data)
+
+        if details_data:
+            self._update_offer_details(instance, details_data)
+
+        return instance
+
+
+    def _update_offer_details(self, offer, details_data):
+        """Updates offer details by offer type."""
+
+        for detail_data in details_data:
+            offer_type = detail_data["offer_type"]
+
+            detail = offer.details.get(offer_type=offer_type)
+
+            for field, value in detail_data.items():
+                setattr(detail, field, value)
+
+            detail.save()
