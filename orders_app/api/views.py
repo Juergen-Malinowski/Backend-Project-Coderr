@@ -227,10 +227,72 @@ class OrderDetailView(APIView):
 class OrderCountView(APIView):
     """API view for counting the total business user orders."""
 
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id):
+        """Returns in-progress order count for a business user."""
+
+        try:
+            if not Order.objects.filter(
+                business_user_id=business_user_id
+            ).exists():
+                raise NotFound("Business user not found.")
+
+            count = Order.objects.filter(
+                business_user_id=business_user_id,
+                status=Order.IN_PROGRESS,
+            ).count()
+
+            return Response(
+                {"order_count": count},
+                status=status.HTTP_200_OK,
+            )
+
+        except NotFound as error:
+            return Response(
+                {"detail": str(error.detail)},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class CompletedOrderCountView(APIView):
     """API view for counting the completed business user orders."""
 
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id):
+        """Returns completed order count for a business user."""
+
+        try:
+            if not Order.objects.filter(
+                business_user_id=business_user_id
+            ).exists():
+                raise NotFound("Business user not found.")
+
+            count = Order.objects.filter(
+                business_user_id=business_user_id,
+                status=Order.COMPLETED,
+            ).count()
+
+            return Response(
+                {"completed_order_count": count},
+                status=status.HTTP_200_OK,
+            )
+
+        except NotFound as error:
+            return Response(
+                {"detail": str(error.detail)},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
