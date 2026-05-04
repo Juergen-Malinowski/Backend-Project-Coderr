@@ -55,3 +55,31 @@ class OrderCreateSerializer(serializers.Serializer):
             features=offer_detail.features,
             offer_type=offer_detail.offer_type,
         )
+
+
+class OrderStatusUpdateSerializer(serializers.Serializer):
+    """
+    Validates that the request contains only the 'status' field and
+    that its value is one of the allowed choices.
+    """
+
+    status = serializers.ChoiceField(
+        choices=[
+            Order.IN_PROGRESS,
+            Order.COMPLETED,
+            Order.CANCELLED,
+        ],
+    )
+
+    def validate(self, attrs):
+        """
+        Ensures that exactly one field is provided and that this
+        field is 'status' only.
+        """
+
+        if set(self.initial_data.keys()) != {"status"}:
+            raise serializers.ValidationError(
+                "Only status can be updated."
+            )
+
+        return attrs
