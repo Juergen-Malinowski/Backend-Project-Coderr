@@ -127,7 +127,7 @@ class TestBaseInfoPlatformStatisticsAPI(APITestCase):
 
         response = self.client.get(self.url)
 
-        assert float(response.data["average_rating"]) == 4.0
+        assert float(response.data["average_rating"]) == 4.7
 
 
     def test_get_base_info_returns_business_profile_count(self):

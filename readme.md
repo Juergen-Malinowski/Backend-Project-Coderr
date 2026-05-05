@@ -531,13 +531,13 @@ This allows every endpoint test suite to be executed independently during develo
 
 ---
 
-### Current Test Counts - 155 Tests
+### Current Test Counts - 163 Tests
 
 | App           | Test Count |
 | ------------- | ---------: |
 | auth_app      |         19 |
 | profiles_app  |         22 |
-| offers_app    |         34 |
+| offers_app    |         42 |
 | orders_app    |         38 |
 | reviews_app   |         34 |
 | base_info_app |          8 |
