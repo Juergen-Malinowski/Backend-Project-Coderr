@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +7,11 @@ from rest_framework.views import APIView
 from reviews_app.models import Review
 
 from .permissions import IsCustomerUser
-from .serializers import ReviewCreateSerializer, ReviewSerializer
+from .serializers import (
+    ReviewCreateSerializer, 
+    ReviewSerializer, 
+    ReviewUpdateSerializer,
+)
 
 
 class ReviewListCreateView(APIView):
@@ -120,4 +124,80 @@ class ReviewListCreateView(APIView):
 class ReviewDetailView(APIView):
     """API view for updating and deleting a review."""
 
-    pass
+    permission_classes = [IsAuthenticated]
+
+
+    def get_object(self, pk):
+        """Returns review or raises not found."""
+
+        try:
+            return Review.objects.get(id=pk)
+        except Review.DoesNotExist:
+            raise NotFound("Review not found.")
+
+
+    def patch(self, request, pk):
+        """Updates rating and description for the review creator only."""
+
+        try:
+            review = self.get_object(pk)
+
+            if review.reviewer != request.user:
+                return Response(
+                    {"detail": "Permission denied."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            serializer = ReviewUpdateSerializer(
+                review,
+                data=request.data,
+                partial=True,
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        except NotFound as error:
+            return Response(
+                {"detail": str(error.detail)},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+    def delete(self, request, pk):
+        """Deletes a review for the review creator only."""
+
+        try:
+            review = self.get_object(pk)
+
+            if review.reviewer != request.user:
+                return Response(
+                    {"detail": "Permission denied."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            review.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except NotFound as error:
+            return Response(
+                {"detail": str(error.detail)},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

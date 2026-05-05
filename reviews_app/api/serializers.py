@@ -69,3 +69,29 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             reviewer=request.user,
             **validated_data,
         )
+
+
+class ReviewUpdateSerializer(serializers.ModelSerializer):
+    """
+    Validates review update data, allows only rating and description
+    to be updated.
+    """
+
+    class Meta:
+        model = Review
+        fields = [
+            "rating",
+            "description",
+        ]
+
+    def validate(self, attrs):
+        """Ensures that only allowed fields are updated."""
+
+        if not set(self.initial_data.keys()).issubset(
+            {"rating", "description"}
+        ):
+            raise serializers.ValidationError(
+                "Only rating and description can be updated."
+            )
+
+        return attrs
