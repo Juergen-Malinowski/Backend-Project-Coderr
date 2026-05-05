@@ -1,6 +1,7 @@
 from django.db.models import Avg
 
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,7 +15,7 @@ from .serializers import BaseInfoSerializer
 class BaseInfoView(APIView):
     """API view for aggregated platform statistics."""
 
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         """

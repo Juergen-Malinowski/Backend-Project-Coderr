@@ -30,7 +30,7 @@ class RegistrationView(APIView):
             return Response(
             error.detail,
             status=status.HTTP_400_BAD_REQUEST,
-        )
+            )
         except Exception:
             return Response(
                 {"detail": "Internal server error."},
