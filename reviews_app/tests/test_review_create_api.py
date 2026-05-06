@@ -115,8 +115,8 @@ class TestReviewCreateAPI(APITestCase, ReviewTestMixin):
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-    def test_create_duplicate_review_returns_403(self):
-        """Ensures users cannot review the same business user twice."""
+    def test_create_duplicate_review_returns_400(self):
+        """Ensures duplicate reviews return HTTP 400."""
 
         self.create_review(
             self.business_user,
@@ -132,7 +132,7 @@ class TestReviewCreateAPI(APITestCase, ReviewTestMixin):
             format="json",
         )
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
     def test_create_review_without_business_user_returns_400(self):

@@ -31,6 +31,7 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             "description",
         ]
 
+
     def validate_business_user(self, value):
         """Ensures that reviews can only be created for business users."""
 
@@ -46,6 +47,7 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
         return value
 
+
     def validate(self, attrs):
         """Ensures that a reviewer can only review a business user once."""
 
@@ -56,9 +58,10 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             business_user=business_user,
             reviewer=request.user,
         ).exists():
-            raise PermissionError("Review already exists.")
+            raise serializers.ValidationError("Review already exists.")
 
         return attrs
+
 
     def create(self, validated_data):
         """Creates a review and assigns the authenticated user as reviewer."""
@@ -83,6 +86,7 @@ class ReviewUpdateSerializer(serializers.ModelSerializer):
             "rating",
             "description",
         ]
+
 
     def validate(self, attrs):
         """Ensures that only allowed fields are updated."""

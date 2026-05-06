@@ -102,12 +102,6 @@ class ReviewListCreateView(APIView):
                 status=status.HTTP_201_CREATED,
             )
 
-        except PermissionError as error:
-            return Response(
-                {"detail": str(error)},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         except ValidationError as error:
             return Response(
                 error.detail,
