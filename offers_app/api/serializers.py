@@ -201,7 +201,12 @@ class OfferUpdateSerializer(serializers.ModelSerializer):
         for detail_data in details_data:
             offer_type = detail_data["offer_type"]
 
-            detail = offer.details.get(offer_type=offer_type)
+            try:
+                detail = offer.details.get(offer_type=offer_type)
+            except OfferDetail.DoesNotExist:
+                raise serializers.ValidationError(
+                    "Offer detail does not exist for this offer type."
+                )
 
             for field, value in detail_data.items():
                 setattr(detail, field, value)

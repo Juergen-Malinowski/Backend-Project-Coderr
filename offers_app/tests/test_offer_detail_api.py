@@ -291,6 +291,36 @@ class TestOfferDetailAPI(APITestCase, OfferTestMixin):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
+    def test_patch_offer_with_missing_offer_detail_returns_400(self):
+        """Ensures missing offer details return HTTP 400."""
+
+        self.client.force_authenticate(user=self.business_user)
+
+        basic_detail = self.offer.details.get(offer_type="basic")
+        basic_detail.delete()
+
+        data = {
+            "details": [
+                {
+                    "title": "Updated Basic Package",
+                    "revisions": 2,
+                    "delivery_time_in_days": 5,
+                    "price": 100,
+                    "features": ["Logo"],
+                    "offer_type": "basic",
+                }
+            ]
+        }
+
+        response = self.client.patch(
+            self.url,
+            data,
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
     @patch("offers_app.models.Offer.objects.get")
     def test_patch_offer_internal_error_returns_500(self, mock_get):
         """Ensures offer updates return HTTP 500 on internal errors."""
