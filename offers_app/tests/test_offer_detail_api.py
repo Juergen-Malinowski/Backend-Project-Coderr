@@ -129,6 +129,40 @@ class TestOfferDetailAPI(APITestCase, OfferTestMixin):
         assert response.data["description"] == self.offer.description
 
 
+    def test_patch_offer_returns_full_response_structure(self):
+        """Ensures patch responses contain full documented offer data."""
+
+        self.client.force_authenticate(user=self.business_user)
+
+        response = self.client.patch(
+            self.url,
+            {
+                "title": "Updated Design Package",
+            },
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+
+        assert "id" in response.data
+        assert "title" in response.data
+        assert "image" in response.data
+        assert "description" in response.data
+        assert "details" in response.data
+
+        assert len(response.data["details"]) == 3
+
+        detail = response.data["details"][0]
+
+        assert "id" in detail
+        assert "title" in detail
+        assert "revisions" in detail
+        assert "delivery_time_in_days" in detail
+        assert "price" in detail
+        assert "features" in detail
+        assert "offer_type" in detail
+
+
     def test_patch_offer_detail_by_offer_type_returns_200(self):
         """
         Ensures the correct offer detail is updated by

@@ -207,3 +207,19 @@ class OfferUpdateSerializer(serializers.ModelSerializer):
                 setattr(detail, field, value)
 
             detail.save()
+
+
+class OfferPatchResponseSerializer(serializers.ModelSerializer):
+    """Serializes full offer data after partial offer updates."""
+
+    details = OfferDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id",
+            "title",
+            "image",
+            "description",
+            "details",
+        ]

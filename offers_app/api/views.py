@@ -15,6 +15,7 @@ from .serializers import (
     OfferDetailSerializer,
     OfferDetailViewSerializer,
     OfferListSerializer,
+    OfferPatchResponseSerializer,
     OfferUpdateSerializer,
 )
 
@@ -204,10 +205,12 @@ class OfferDetailView(APIView):
             )
 
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            updated_offer = serializer.save()
+
+            response_serializer = OfferPatchResponseSerializer(updated_offer)
 
             return Response(
-                serializer.data,
+                response_serializer.data,
                 status=status.HTTP_200_OK,
             )
 
