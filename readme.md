@@ -73,7 +73,7 @@ python manage.py runserver
   - [Tested Apps](#tested-apps)
   - [Test File Locations](#test-file-locations)
   - [Running Tests](#running-tests)
-- [Current Test Counts - 163 Tests](#current-test-counts---163-tests)
+- [Current Test Counts - 166 Tests](#current-test-counts---166-tests)
   - [Test Coverage Focus](#test-coverage-focus)
 
 ---
@@ -547,15 +547,15 @@ This allows every endpoint test suite to be executed independently during develo
 
 ---
 
-### Current Test Counts - 163 Tests
+### Current Test Counts - 166 Tests
 
 | App           | Test Count |
 | ------------- | ---------: |
 | auth_app      |         19 |
 | profiles_app  |         22 |
-| offers_app    |         42 |
+| offers_app    |         44 |
 | orders_app    |         38 |
-| reviews_app   |         34 |
+| reviews_app   |         35 |
 | base_info_app |          8 |
 
 ---
