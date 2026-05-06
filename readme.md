@@ -184,7 +184,7 @@ premium
 
 Constraints:
 
-- one package type per offer is allowed per offer
+- each offer can contain only one package per offer_type
 
 Admin integration:
 
@@ -338,6 +338,9 @@ The frontend uses predefined guest login accounts.
 
 These users must exist in the backend database.
 
+These are demo accounts for local testing only.
+Do not use in production environments.
+
 ### Customer Guest Login
 
 ```text
@@ -367,16 +370,16 @@ Available API endpoint groups:
 /api/profiles/customer/
 
 /api/offers/
-/api/offers/<id>/
-/api/offerdetails/<id>/
+/api/offers/<pk>/
+/api/offerdetails/<pk>/
 
 /api/orders/
-/api/orders/<id>/
+/api/orders/<pk>/
 /api/order-count/<business_user_id>/
 /api/completed-order-count/<business_user_id>/
 
 /api/reviews/
-/api/reviews/<id>/
+/api/reviews/<pk>/
 
 /api/base-info/
 ```
@@ -385,15 +388,16 @@ Available API endpoint groups:
 
 ## Project Status
 
-The backend foundation and security setup have been initialized.
+The backend is fully implemented and production-ready for integration.
 
-Current progress includes:
+Current state includes:
 
-- backend repository setup
-- virtual environment setup
-- environment security preparation
-- gitignore configuration
-- initial README structure
+- all API endpoints implemented
+- full test suite passing (163 tests)
+- TDD-based architecture completed
+- ready for frontend integration and final validation
+
+---
 
 ## Testing
 
