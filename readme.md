@@ -254,7 +254,7 @@ Rules:
 
 ## Frontend
 
-This backend is designed to work together with the separated Coderr frontend project.
+This backend is designed to work together with the separate Coderr frontend project.
 
 Frontend repository:
 
@@ -272,6 +272,12 @@ The frontend communicates with the backend through:
 http://127.0.0.1:8000/api/
 ```
 
+Important:
+
+- The Django backend must be running locally for full functionality
+- A deployed frontend (e.g. via file server) is intended for UI demonstration only
+- API-dependent features require an active backend connection
+
 ---
 
 ## Environment Setup
@@ -284,7 +290,13 @@ After cloning the repository, create your own `.env` file in the repository root
 
 Use the provided `.env.template` file as a base.
 
-Example:
+Generate a SECRET_KEY using:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+Then insert it into your `.env` file:
 
 ```env
 SECRET_KEY="your_secret_key_here"
