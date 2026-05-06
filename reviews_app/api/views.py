@@ -154,9 +154,14 @@ class ReviewDetailView(APIView):
                 partial=True,
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            review = serializer.save()
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response_serializer = ReviewSerializer(review)
+
+            return Response(
+                response_serializer.data,
+                status=status.HTTP_200_OK,
+            )
 
         except ValidationError as error:
             return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)

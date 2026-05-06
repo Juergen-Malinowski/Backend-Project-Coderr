@@ -62,6 +62,39 @@ class TestReviewDetailAPI(APITestCase, ReviewTestMixin):
         assert response.status_code == status.HTTP_200_OK
 
 
+    def test_patch_review_returns_full_review_data(self):
+        """Ensures review updates return full review response data."""
+
+        self.client.force_authenticate(user=self.customer_user)
+
+        response = self.client.patch(
+            self.url,
+            {
+                "rating": 5,
+                "description": "Updated review.",
+            },
+            format="json",
+        )
+
+        expected_fields = [
+            "id",
+            "business_user",
+            "reviewer",
+            "rating",
+            "description",
+            "created_at",
+            "updated_at",
+        ]
+
+        assert response.status_code == status.HTTP_200_OK
+        assert list(response.data.keys()) == expected_fields
+        assert response.data["id"] == self.review.id
+        assert response.data["business_user"] == self.business_user.id
+        assert response.data["reviewer"] == self.customer_user.id
+        assert response.data["rating"] == 5
+        assert response.data["description"] == "Updated review."
+
+
     def test_patch_review_updates_allowed_fields(self):
         """Ensures review rating and description are updated."""
 
