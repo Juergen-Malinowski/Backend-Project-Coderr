@@ -75,6 +75,7 @@ python manage.py runserver
   - [Running Tests](#running-tests)
 - [Current Test Counts - 166 Tests](#current-test-counts---166-tests)
   - [Test Coverage Focus](#test-coverage-focus)
+- [Demo Seed Data](#demo-seed-data)
 
 ---
 
@@ -578,3 +579,71 @@ The test suite validates:
 - object deletion behavior
 
 All tests are designed to validate backend behavior independently from frontend validation logic.
+
+---
+
+## Demo Seed Data
+
+This project includes a demo data script to quickly populate the database with realistic example data for frontend and backend testing.
+
+The demo seed data includes:
+
+- 3 business users
+- 3 customer users
+- profiles for all users
+- offers with basic, standard and premium variants
+- completed and in-progress orders
+- reviews and ratings
+
+The existing guest login accounts remain independent from the demo seed data and continue to serve as a quick project entry without database setup.
+
+### Run Demo Seed Script
+
+Run the following command inside the `backend` directory:
+
+```cmd
+python manage.py shell -c "exec(open('scripts/seed_coderr_demo_data.py', encoding='utf-8').read())"
+```
+
+### Repeated Execution
+
+The demo seed script is designed to be safely executable multiple times.
+
+Existing demo users, profiles, offers, orders and reviews are reused or updated automatically to prevent duplicate or inconsistent demo data.
+
+### Demo Business Users
+
+| Username | Specialization |
+| --- | --- |
+| PixelForge | Frontend Development |
+| APIBuilder | Backend Development |
+| CodeCraftStudio | Fullstack Development |
+
+### Demo Customer Users
+
+| Username |
+| --- |
+| CreativeCat |
+| StartupVision |
+| DigitalWave |
+
+### Default Password
+
+All demo users use the following password:
+
+```text
+Testpass123
+```
+
+### Successful Execution Output
+
+After successful execution, the terminal displays all created demo users and the shared password.
+
+Example output:
+
+```text
+Coderr demo data created successfully.
+Business users: PixelForge, APIBuilder, CodeCraftStudio
+Customer users: CreativeCat, StartupVision, DigitalWave
+Default password for all demo users: Testpass123
+```
