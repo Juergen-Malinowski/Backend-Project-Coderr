@@ -1,4 +1,6 @@
 from decimal import Decimal
+from pathlib import Path
+from shutil import copyfile
 
 from django.contrib.auth.models import User
 
@@ -142,6 +144,20 @@ def create_review(business_user, reviewer, rating, description):
     return review
 
 
+def add_profile_image(user, image_name):
+    """Copies a demo profile image and assigns it to the user profile."""
+
+    source_path = Path("seed_assets") / "profiles" / image_name
+    target_path = Path("media") / "profiles" / image_name
+
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if source_path.exists():
+        copyfile(source_path, target_path)
+        user.profile.file = f"profiles/{image_name}"
+        user.profile.save()
+
+
 def run_seed():
     """Creates demo users, profiles, offers, orders and reviews."""
 
@@ -189,6 +205,22 @@ def run_seed():
             "Spezialisiert auf Django, REST APIs, JavaScript "
             "und responsive Webanwendungen."
         ),
+    )
+
+
+    add_profile_image(
+        frontend_business,
+        "Business-User-Frontend-PixelForge.jpg",
+    )
+
+    add_profile_image(
+        backend_business,
+        "Business-User-Backend-APIBuilder.jpg",
+    )
+
+    add_profile_image(
+        fullstack_business,
+        "Business-User-Fullstack-CodeCraftStudio.jpg",
     )
 
 
