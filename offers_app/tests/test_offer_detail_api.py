@@ -291,6 +291,32 @@ class TestOfferDetailAPI(APITestCase, OfferTestMixin):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
+    def test_patch_offer_detail_without_offer_type_returns_400(self):
+        """Ensures offer detail updates require an offer type."""
+
+        self.client.force_authenticate(user=self.business_user)
+
+        data = {
+            "details": [
+                {
+                    "title": "Basic Design Updated",
+                    "revisions": 3,
+                    "delivery_time_in_days": 6,
+                    "price": 120,
+                    "features": ["Logo Design", "Flyer"],
+                }
+            ]
+        }
+
+        response = self.client.patch(
+            self.url,
+            data,
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
     def test_patch_offer_with_missing_offer_detail_returns_400(self):
         """Ensures missing offer details return HTTP 400."""
 

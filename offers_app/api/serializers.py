@@ -199,7 +199,12 @@ class OfferUpdateSerializer(serializers.ModelSerializer):
         """Updates offer details by offer type."""
 
         for detail_data in details_data:
-            offer_type = detail_data["offer_type"]
+            offer_type = detail_data.get("offer_type")
+
+            if not offer_type:
+                raise serializers.ValidationError(
+                    "Offer type is required."
+                )
 
             try:
                 detail = offer.details.get(offer_type=offer_type)
