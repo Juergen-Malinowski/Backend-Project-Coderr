@@ -46,6 +46,9 @@ python manage.py migrate
 # Create admin user
 python manage.py createsuperuser
 
+# Optional: Load demo data for frontend testing
+python manage.py shell -c "exec(open('scripts/seed_coderr_demo_data.py', encoding='utf-8').read())"
+
 # Start development server
 python manage.py runserver
 ```
