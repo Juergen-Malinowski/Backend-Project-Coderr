@@ -1,5 +1,11 @@
 # Coderr Backend
 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-168C9D?style=for-the-badge&logo=googlechrome&logoColor=white)](https://coderr.juergen-malinowski.de)
+
+> **Deployment branch:**  
+> This branch contains the backend configuration used for the public portfolio demo.  
+> The [`main`](https://github.com/Juergen-Malinowski/Backend-Project-Coderr/tree/main) branch preserves the original reviewed project version.
+
 Backend for the Coderr platform built with Django and Django REST Framework.
 
 This project is part of the Developer Akademie backend course and is designed to work together with a separate frontend repository.
@@ -76,7 +82,7 @@ python manage.py runserver
   - [Tested Apps](#tested-apps)
   - [Test File Locations](#test-file-locations)
   - [Running Tests](#running-tests)
-- [Current Test Counts - 166 Tests](#current-test-counts---166-tests)
+- [Current Test Counts - 167 Tests](#current-test-counts---167-tests)
   - [Test Coverage Focus](#test-coverage-focus)
 - [Demo Seed Data](#demo-seed-data)
 
@@ -258,7 +264,7 @@ Rules:
 
 ## Frontend
 
-This backend is designed to work together with the separate Coderr frontend project.
+This backend works together with the separate Coderr frontend project.
 
 Frontend repository:
 
@@ -270,17 +276,27 @@ Frontend version:
 V1.2.0
 ```
 
-The frontend communicates with the backend through:
+### Live Deployment
+
+The public portfolio demo is available at:
+
+[Open the Coderr Live Demo](https://coderr.juergen-malinowski.de)
+
+The deployed frontend communicates with this backend through:
+
+```text
+https://api.coderr.juergen-malinowski.de/api/
+```
+
+### Local Development
+
+For local development, the frontend communicates with the backend through:
 
 ```text
 http://127.0.0.1:8000/api/
 ```
 
-Important:
-
-- The Django backend must be running locally for full functionality
-- A deployed frontend (e.g. via file server) is intended for UI demonstration only
-- API-dependent features require an active backend connection
+The Django development server must be running locally for API-dependent frontend functionality.
 
 ---
 
@@ -350,26 +366,25 @@ A superuser account is required to access the admin interface.
 
 ## Guest Login Accounts
 
-The frontend uses predefined guest login accounts.
+The deployed frontend provides predefined guest login accounts for demonstration and testing.
 
-These users must exist in the backend database.
-
-These are demo accounts for local testing only.
-Do not use in production environments.
+These accounts are created through the backend demo seed data.
 
 ### Customer Guest Login
 
 ```text
-username: KarlKalle
-password: Dagi1234
+username: CreativeCat
+password: Testpass123
 ```
 
 ### Business Guest Login
 
 ```text
-username: WillWill
-password: Dagi1234
+username: PixelForge
+password: Testpass123
 ```
+
+These accounts are intended exclusively for the non-commercial portfolio demo and testing.
 
 ---
 
@@ -404,14 +419,15 @@ Available API endpoint groups:
 
 ## Project Status
 
-The backend is fully implemented and production-ready for integration.
+The backend is fully implemented and deployed as part of the public Coderr portfolio demo.
 
 Current state includes:
 
 - all API endpoints implemented
-- full test suite passing (163 tests)
+- full test suite passing (167 tests)
 - TDD-based architecture completed
-- ready for frontend integration and final validation
+- frontend and backend integration completed
+- deployed behind Nginx and Gunicorn on a Hetzner VM
 
 ---
 
@@ -551,13 +567,13 @@ This allows every endpoint test suite to be executed independently during develo
 
 ---
 
-### Current Test Counts - 166 Tests
+### Current Test Counts - 167 Tests
 
 | App           | Test Count |
 | ------------- | ---------: |
 | auth_app      |         19 |
 | profiles_app  |         22 |
-| offers_app    |         44 |
+| offers_app    |         45 |
 | orders_app    |         38 |
 | reviews_app   |         35 |
 | base_info_app |          8 |
@@ -598,7 +614,7 @@ The demo seed data includes:
 - completed and in-progress orders
 - reviews and ratings
 
-The existing guest login accounts remain independent from the demo seed data and continue to serve as a quick project entry without database setup.
+The deployed frontend guest login accounts are part of this demo seed data and provide direct access to the portfolio demo.
 
 ### Run Demo Seed Script
 
